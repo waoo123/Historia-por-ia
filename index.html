@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Until Dawn: A Experiência</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cinzel:wght@400;500;600;700&display=swap');
+
+        :root {
+            --cor-fundo: #0a0a0a;
+            --cor-principal: #1a1a1a;
+            --cor-secundaria: #2d2d2d;
+            --cor-destaque: #c9a66b;
+            --cor-texto: #e8e8e8;
+            --cor-sangue: #8b0000;
+            --cor-fogo: #b87333;
+        }
+          
+        body {
+            background-color: var(--cor-fundo);
+            background-image: url('https://wallpapercave.com/wp/wp1946241.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--cor-texto);
+            font-family: 'Cormorant Garamond', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            transition: background-image 1s ease-in-out;
+        }
+
+        .caixa-principal{
+            background-color: rgba(26, 26, 26, 0.9);
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            padding: 30px;
+            border: 1px solid var(--cor-destaque);
+            box-shadow: 0 0 20px rgba(201, 166, 107, 0.3);
+            position: relative;
+        }
+
+        .caixa-principal::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--cor-destaque), transparent);
+        }
+
+        .title-container {
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--cor-destaque);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--cor-destaque);
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            letter-spacing: 3px;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-style: italic;
+            letter-spacing: 1px;
+            margin-top: 5px;
+            color: var(--cor-texto);
+            font-size: 1.2rem;
+        }
+
+        .caixa-perguntas {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            min-height: 100px;
+            text-align: left;
+        }
+
+        .caixa-alternativas {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-texto);
+            border: 1px solid var(--cor-destaque);
+            border-radius: 0;
+            padding: 12px 20px;
+            transition: all 0.3s;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background-color: var(--cor-destaque);
+            color: var(--cor-principal);
+            transform: translateY(-2px);
+        }
+
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .caixa-resultado {
+            display: none;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .caixa-resultado.mostrar {
+            display: block;
+        }
+
+        .texto-resultado {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .novamente-btn {
+            background-color: var(--cor-sangue);
+            border-color: var(--cor-sangue);
+            margin-top: 20px;
+        }
+
+        .novamente-btn:hover {
+            background-color: #6b0000;
+            color: var(--cor-texto);
+        }
+
+        /* Blood splatter effect */
+        .blood {
+            position: absolute;
+            background-color: var(--cor-sangue);
+            opacity: 0.7;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Tela de seleção de personagem */
+        .tela-selecao {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .personagens-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+            width: 100%;
+        }
+
+        .personagem {
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            padding: 15px;
+            border: 1px solid transparent;
+        }
+
+        .personagem:hover {
+            transform: scale(1.05);
+            border-color: var(--cor-destaque);
+        }
+
+        .personagem img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--cor-secundaria);
+        }
+
+        .personagem.selecionado img {
+            border-color: var(--cor-destaque);
+            box-shadow: 0 0 15px var(--cor-destaque);
+        }
+
+        .personagem p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        .comecar-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+        }
+
+        /* Jogo principal */
+        .jogo-principal {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .caixa-principal {
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .caixa-perguntas {
+                font-size: 1.1rem;
+            }
+            button {
+                font-size: 1rem;
+                padding: 10px 15px;
+            }
+            .personagens-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="caixa-principal">
+        <div class="title-container">
+            <h1>UNTIL DAWN</h1>
+            <p class="subtitle">A Experiência</p>
+        </div>
+        
+        <!-- Tela de seleção de personagem -->
+        <div class="tela-selecao" id="telaSelecao">
+            <h2>Selecione seu personagem</h2>
+            <div class="personagens-container" id="personagensContainer">
+                <!-- Personagens serão adicionados via JavaScript -->
+            </div>
+            <button class="comecar-btn" id="comecarBtn">Começar Jogo</button>
+        </div>
+        
+        <!-- Jogo principal -->
+        <div class="jogo-principal" id="jogoPrincipal">
+            <div class="caixa-perguntas"></div>
+            <div class="caixa-alternativas"></div>
+            <div class="caixa-resultado">
+                <p class="texto-resultado"></p>
+                <button class="novamente-btn">Reviver o Pesadelo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos personagens com as novas imagens
+        const personagens = [
+            { nome: "Josh", imagem: "https://i.pinimg.com/736x/2e/eb/fb/2eebfbdc1a179c547c5f88f991cd53ba.jpg", descricao: "O anfitrião misterioso" },
+            { nome: "Emily", imagem: "https://i.pinimg.com/736x/ed/60/89/ed6089d5e3fd15294f6e2520371155a8.jpg", descricao: "A garota popular" },
+            { nome: "Chris", imagem: "https://i.pinimg.com/736x/68/40/6b/68406be8ebfc3779c2e20807468eff89.jpg", descricao: "O engraçado da turma" },
+            { nome: "Ashley", imagem: "https://i.pinimg.com/736x/09/61/9a/09619a1929a70eab5b9667b0a2a0b524.jpg", descricao: "A inteligente e sensível" },
+            { nome: "Matt", imagem: "https://i.pinimg.com/736x/0c/54/c6/0c54c6254b0d0d9725da46e14bcf3b9f.jpg", descricao: "O atleta" },
+            { nome: "Jessica", imagem: "https://i.pinimg.com/736x/da/ad/bf/daadbf1c8dc12eb8a98ff77fb8921068.jpg", descricao: "A beldade" },
+            { nome: "Mike", imagem: "https://i.pinimg.com/736x/c0/5e/e3/c05ee3c0103719b0ae21c407f5e2d151.jpg", descricao: "O líder natural" },
+            { nome: "Sam", imagem: "https://i.pinimg.com/736x/8e/1b/ba/8e1bba9ee19e698b4ae8b33809eef4ee.jpg", descricao: "A heroína corajosa" }
+        ];
+
+        const backgrounds = [
+            'https://getwallpapers.com/wallpaper/full/3/0/d/246132.jpg',
+            'https://tse2.mm.bing.net/th?id=OIP.HbsSGlwzwn9ukvW3iiyxhQHaEK&pid=Api&P=0&h=180',
+            'https://getwallpapers.com/wallpaper/full/c/4/6/246314.jpg',
+            'https://sfondo.info/i/original/7/c/b/89490.jpg',
+            'https://wallpapercave.com/wp/wp1946241.jpg'
+        ];
+
+        // Variáveis do jogo
+        let personagemSelecionado = null;
+        let atual = 0;
+        let perguntaAtual;
+        let historiaFinal = "";
+
+        // Elementos da tela de seleção
+        const telaSelecao = document.getElementById("telaSelecao");
+        const personagensContainer = document.getElementById("personagensContainer");
+        const comecarBtn = document.getElementById("comecarBtn");
+
+        // Elementos do jogo principal
+        const jogoPrincipal = document.getElementById("jogoPrincipal");
+        const caixaPerguntas = document.querySelector(".caixa-perguntas");
+        const caixaAlternativas = document.querySelector(".caixa-alternativas");
+        const caixaResultado = document.querySelector(".caixa-resultado");
+        const textoResultado = document.querySelector(".texto-resultado");
+        const botaoJogarNovamente = document.querySelector(".novamente-btn");
+
+        // Inicializa a tela de seleção de personagens
+        function inicializarSelecaoPersonagens() {
+            personagens.forEach(personagem => {
+                const divPersonagem = document.createElement("div");
+                divPersonagem.className = "personagem";
+                divPersonagem.innerHTML = `
+                    <img src="${personagem.imagem}" alt="${personagem.nome}">
+                    <p>${personagem.nome}</p>
+                    <small>${personagem.descricao}</small>
+                `;
+                
+                divPersonagem.addEventListener("click", () => {
+                    // Remove seleção anterior
+                    document.querySelectorAll(".personagem").forEach(p => {
+                        p.classList.remove("selecionado");
+                    });
+                    
+                    // Adiciona seleção ao novo personagem
+                    divPersonagem.classList.add("selecionado");
+                    personagemSelecionado = personagem.nome;
+                });
+                
+                personagensContainer.appendChild(divPersonagem);
+            });
+
+            // Seleciona o primeiro personagem por padrão
+            personagensContainer.firstElementChild?.classList.add("selecionado");
+            personagemSelecionado = personagens[0].nome;
+        }
+
+        // Começa o jogo
+        function comecarJogo() {
+            telaSelecao.style.display = "none";
+            jogoPrincipal.style.display = "block";
+            mostraPergunta();
+        }
+
+        // Funções do jogo
+        function aleatorio(lista) {
+            const posicao = Math.floor(Math.random() * lista.length);
+            return lista[posicao];
+        }
+
+        function mudarBackground() {
+            const bg = aleatorio(backgrounds.filter(bg => bg !== document.body.style.backgroundImage.split('"')[1]));
+            document.body.style.backgroundImage = `url('${bg}')`;
+        }
+
+        function createBloodSplatter() {
+            const blood = document.createElement('div');
+            blood.classList.add('blood');
+            
+            const size = Math.random() * 100 + 50;
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            
+            blood.style.width = `${size}px`;
+            blood.style.height = `${size}px`;
+            blood.style.left = `${x}px`;
+            blood.style.top = `${y}px`;
+            
+            document.body.appendChild(blood);
+            
+            setTimeout(() => {
+                blood.remove();
+            }, 3000);
+        }
+
+        function mostraPergunta() {
+            if (atual >= perguntas.length) {
+                mostraResultado();
+                return;
+            }
+            perguntaAtual = perguntas[atual];
+            caixaPerguntas.textContent = perguntaAtual.enunciado.replace(/\[nome\]/g, personagemSelecionado);
+            caixaAlternativas.textContent = "";
+            mostraAlternativas();
+            mudarBackground();
+        }
+
+        function mostraAlternativas() {
+            for (const alternativa of perguntaAtual.alternativas) {
+                const botaoAlternativas = document.createElement("button");
+                botaoAlternativas.textContent = alternativa.texto;
+                botaoAlternativas.addEventListener("click", () => {
+                    createBloodSplatter();
+                    respostaSelecionada(alternativa);
+                });
+                caixaAlternativas.appendChild(botaoAlternativas);
+            }
+        }
+
+        function respostaSelecionada(opcaoSelecionada) {
+            const afirmacoes = aleatorio(opcaoSelecionada.afirmacao);
+            historiaFinal += afirmacoes + " ";
+            if (opcaoSelecionada.proxima !== undefined) {
+                atual = opcaoSelecionada.proxima;
+            } else {
+                mostraResultado();
+                return;
+            }
+            mostraPergunta();
+        }
+
+        function mostraResultado() {
+            caixaPerguntas.textContent = `Quando o amanhecer chega sobre a Montanha Blackwood...`;
+            textoResultado.textContent = historiaFinal.replace(/\[nome\]/g, personagemSelecionado);
+            caixaAlternativas.textContent = "";
+            caixaResultado.classList.add("mostrar");
+            
+            // Add dramatic final touch
+            document.body.style.backgroundImage = "linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://wallpapercave.com/wp/wp1946241.jpg')";
+            
+            botaoJogarNovamente.addEventListener("click", jogaNovamente);
+        }
+
+        function jogaNovamente() {
+            atual = 0;
+            historiaFinal = "";
+            caixaResultado.classList.remove("mostrar");
+            document.body.style.backgroundImage = "url('https://wallpapercave.com/wp/wp1946241.jpg')";
+            
+            // Volta para a tela de seleção
+            jogoPrincipal.style.display = "none";
+            telaSelecao.style.display = "flex";
+        }
+
+        // Perguntas do jogo (atualizadas para usar o nome do personagem)
+        const perguntas = [
+            {
+                enunciado: "A nevasca cortou toda comunicação da Montanha Blackwood. Enquanto [nome] e os outros se reúnem no salão principal do Washington Lodge, ruídos estranhos ecoam do porão. O que você faz?",
+                alternativas: [
+                    {
+                        texto: "Pegar um atiçador e investigar o barulho com Chris",
+                        afirmacao: [
+                            "[nome] e Chris descem cautelosamente as escadas rangentes, as sombras brincando com sua mente.",
+                            "A lanterna cintilante não revela nada... até [nome] ouvir um arrasto atrás de você."
+                        ],
+                        proxima: 1,
+                    },
+                    {
+                        texto: "Ficar no salão com os outros e tentar pedir ajuda",
+                        afirmacao: [
+                            "Enquanto [nome] disca os serviços de emergência, a linha chia com estática antes de ficar muda.",
+                            "Uma queda de energia repentina mergulha a sala na escuridão, exceto pelo brilho da lareira."
+                        ],
+                        proxima: 2,
+                    },
+                ]
+            },
+            {
+                enunciado: "No porão, [nome] encontra um diário antigo da família Washington. Ele contém entradas perturbadoras sobre 'a maldição do wendigo'. Você:",
+                alternativas: [
+                    {
+                        texto: "Lê o diário cuidadosamente para entender o perigo",
+                        afirmacao: [
+                            "As páginas do diário revelam a horrível verdade sobre o que aconteceu com os mineiros em 1952.",
+                            "[nome] aprende as fraquezas do wendigo, mas o conhecimento tem um preço - você ouve respiração atrás de você."
+                        ],
+                        proxima: 3,
+                    },
+                    {
+                        texto: "Deixa o diário e procura por armas",
+                        afirmacao: [
+                            "[nome] encontra um rifle de caça antigo, mas está sem munição.",
+                            "O som de algo grande se movendo nas sombras faz seu sangue gelar."
+                        ],
+                        proxima: 4,
+                    },
+                ]
+            },
+            {
+                enunciado: "A queda de energia deixa apenas a lareira como luz. De repente, um estrondo vem da porta da frente. [nome] deve:",
+                alternativas: [
+                    {
+                        texto: "Barricar a porta com móveis",
+                        afirmacao: [
+                            "Trabalhando juntos, vocês empurram a pesada mesa de carvalho contra a porta no momento em que algo começa a bater nela.",
+                            "A madeira lasca a cada impacto, dando a [nome] minutos preciosos para escapar."
+                        ],
+                        proxima: 5,
+                    },
+                    {
+                        texto: "Pegar um pedaço de madeira queimando da lareira como arma",
+                        afirmacao: [
+                            "A chama projeta sombras estranhas enquanto [nome] a segura, revelando marcas de garras nas paredes.",
+                            "O calor te lembra o aviso do diário: 'Fogo é sua fraqueza.'"
+                        ],
+                        proxima: 6,
+                    },
+                ]
+            },
+            {
+                enunciado: "[nome] ouve gritos vindo de cima. Ao correr para investigar, encontra Jessica desaparecida e um rastro de sangue levando ao sótão. Você:",
+                alternativas: [
+                    {
+                        texto: "Segue o rastro de sangue sozinho",
+                        afirmacao: [
+                            "Cada degrau da escada range ameaçadoramente enquanto [nome] sobe para a escuridão.",
+                            "O ar fica mais frio, e [nome] percebe que não está sozinho no sótão."
+                        ],
+                        proxima: 7,
+                    },
+                    {
+                        texto: "Reúne os outros antes de investigar",
+                        afirmacao: [
+                            "Quando [nome] volta com ajuda, o rastro de sangue misteriosamente desapareceu.",
+                            "Um sussurro das sombras chama seu nome na voz de Jessica... mas não pode ser ela."
+                        ],
+                        proxima: 7,
+                    },
+                ]
+            },
+            {
+                enunciado: "No sótão, [nome] descobre um retrato antigo da família com rostos riscados. A moldura tem símbolos estranhos esculpidos. Você:",
+                alternativas: [
+                    {
+                        texto: "Leva o retrato como evidência",
+                        afirmacao: [
+                            "Quando [nome] o tira da parede, a casa parece estremecer em resposta.",
+                            "Os símbolos brilham fracamente no luar, enchendo [nome] de terror."
+                        ],
+                    },
+                    {
+                        texto: "Destrói o retrato",
+                        afirmacao: [
+                            "No momento em que [nome] quebra a moldura, todas as luzes da cabana piscam de volta.",
+                            "De algum lugar profundo da casa vem um grito sobrenatural de raiva."
+                        ],
+                    },
+                ]
+            }
+        ];
+
+        // Event listeners
+        comecarBtn.addEventListener("click", comecarJogo);
+
+        // Random blood splatters for atmosphere
+        setInterval(() => {
+            if (Math.random() > 0.9) {
+                createBloodSplatter();
+            }
+        }, 5000);
+
+        // Inicializa o jogo
+        inicializarSelecaoPersonagens();
+    </script>
+</body>
+
+</html>
